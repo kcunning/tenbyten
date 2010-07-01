@@ -4,8 +4,7 @@ Description:
 Features:
 
 0.1:
-	Create rooms linked to each other
-	Rooms will have ordinal orientation to each other
-	Rooms will save to a text file for now, as I am on a train and have had a brain fart about how to write SQL commands. Thank you, Django!
+X	Create rooms linked to each other
+X	Rooms will have ordinal orientation to each other
 
 
