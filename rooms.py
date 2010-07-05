@@ -20,13 +20,21 @@ DIRECTIONS = {
 }
 
 class Room:
+    title = ""
+    description = ""
+    exits = {}
     
     def __init__(self, title='', description='', exits={}):
         self.title = title
         self.description = description
-        self.exits = {}
+        if exits:
+            for i in exits:
+                self.set_exit(i, exits[i])
+        else:
+            self.exits = exits
         
     def set_exit(self, dir, room2):
+        print "I got: ", self.title, dir, room2.title
         self.exits[dir]=room2
         room2.exits[DIRECTIONS[dir]]=self
 
@@ -42,6 +50,9 @@ class Room:
             print "\tNo exits"
             
 class Dungeon:
+    title = ""
+    description = ""
+    rooms = []
     
     def __init__(self, title='', description='', rooms = []):
         self.title = title
@@ -113,10 +124,8 @@ class Dungeon:
                 break 
             if c.lower() == 'n':
                 break
-        new_room = Room(title=title, description=description)
+        new_room = Room(title=title, description=description, exits=exits)
         self.rooms.append(new_room)
-        for i in exits:
-            self.rooms[self.rooms.index(new_room)].set_exit(i,exits[i])
             
         
             

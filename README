@@ -6,8 +6,8 @@ Features:
 0.1:
 X	Create rooms linked to each other
 X	Rooms will have ordinal orientation to each other
-	Gather rooms into dungeon
-	Edit dungeons
+X	Gather rooms into dungeon
+X	Edit dungeons
 	Move around around rooms
 	Evaluate a dungeon
 	
