@@ -34,7 +34,6 @@ class Room:
             self.exits = exits
         
     def set_exit(self, dir, room2):
-        print "I got: ", self.title, dir, room2.title
         self.exits[dir]=room2
         room2.exits[DIRECTIONS[dir]]=self
 
@@ -48,6 +47,12 @@ class Room:
                 print "\t\t", i[0], ": ", i[1].title 
         else:
             print "\tNo exits"
+    
+    def edit(self):
+        self.title = raw_input("New title (blank for no change): ")
+        self.descripition = raw_input("New description (blank for no change): ")
+        
+                
             
 class Dungeon:
     title = ""
@@ -67,12 +72,12 @@ class Dungeon:
     
     def list_rooms(self):
         for r in self.rooms:
-            print r.title
+            print self.rooms.index(r), r.title
             
-    def menu(self):
+    def admin_menu(self):
         while 1==1:
             print "What would you like to do?"
-            print "Edit [d]ungeon | Edit a [r]oom | D[i]splay dungeon | [q]uit"
+            print "Edit [d]ungeon | Edit a [r]oom | D[i]splay dungeon | Add a [c]onnection | [q]uit"
             c = raw_input()[0]
             if c.lower() == 'd':
                 self.update()
@@ -80,9 +85,11 @@ class Dungeon:
                 self.rooms_menu()
             if c.lower() == 'i':
                 self.display()
+            if c.lower() == 'c':
+                self.connect_rooms()
             if c.lower() == 'q':
                 break
-    
+            
     def update(self):
         title = raw_input("New title (blank for no change): ")
         description = raw_input("New description (blank for no change): ")
@@ -103,6 +110,18 @@ class Dungeon:
             if c.lower() == 'b':
                 break
                 
+    def connect_rooms(self):
+        while 1==1:
+            self.list_rooms()
+            r1 = raw_input("Room 1 #: ")
+            d = raw_input("Direction: ")
+            r2 = raw_input("Room 2 #: ")
+            self.rooms[int(r1)].set_exit(d, self.rooms[int(r2)])
+            c = raw_input("Set another connection? ")
+            if c.lower() == 'n':
+                break
+            
+        
     def new_room(self):
         """
         Adds a new room, and connects it to other rooms if needed
@@ -127,6 +146,29 @@ class Dungeon:
         new_room = Room(title=title, description=description, exits=exits)
         self.rooms.append(new_room)
             
+    def edit_room(self):
+        self.list_rooms()
+        c = raw_input("Which room? [#] ")
         
+class Mob:
+    location = Room()
+    dungeon = Dungeon()
+    title = ""
+    description = ""
+    
+    def __init__(self, location=Room(), dungeon = Dungeon(), title="", description=""):
+        self.location=location
+        self.dungeon=dungeon
+        self.title=title
+        self.description=description
+        
+    
+class User(Mob):
+    
+    def __init__(self, location=Room(), dungeon=Dungeon(), title="", description=""):
+        Mob.__init__(self, location=location, title=title, description=description, dungeon=dungeon)
+        
+    def dungeon_walk(self):
+        print "Welcome to", self.dungeon.title, "!"
             
 
