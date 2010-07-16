@@ -1,15 +1,3 @@
-
-"""
-Rooms have the following structure:
-
-Title
-Description
-Exits (dictionary)
-"""
-
-"""
-TODO: Why is the exit setting acting on all rooms?
-"""
 DIRECTIONS = {
     'north' :   'south',
     'south' :   'north',
@@ -19,39 +7,79 @@ DIRECTIONS = {
     'down'  :   'up',
 }
 
+DIR_CHOICES = ( 'north',
+                'south',
+                'east',
+                'west',
+                'up',
+                'down',
+                'n',
+                'e',
+                'w',
+                's',
+                'u',
+                'd')
+
 class Room:
     title = ""
     description = ""
-    exits = {}
-    
-    def __init__(self, title='', description='', exits={}):
+    north = None
+    south = None
+    east = None
+    west = None
+    content = []
+    trigger = {}
+      
+    def __init__(self, title='', description=''):
         self.title = title
         self.description = description
-        if exits:
-            for i in exits:
-                self.set_exit(i, exits[i])
-        else:
-            self.exits = exits
-        
-    def set_exit(self, dir, room2):
-        self.exits[dir]=room2
-        room2.exits[DIRECTIONS[dir]]=self
-
-    
-    def display(self):
+   
+    def display_room(self, admin=False):
         print self.title
         print '\t', self.description
-        if self.exits.keys():
-            print "\tExits: "
-            for i in self.exits.items():
-                print "\t\t", i[0], ": ", i[1].title 
+        print "\tExits: "
+        exits = self.get_exits()
+        if exits:
+            for i in exits:
+                print "\t\t", i
         else:
-            print "\tNo exits"
-    
+                print "\t\tNo exits."
+
+    def get_exits(self):
+        exits = []
+        for k in self.exits.keys():
+            if self.exits[k]:
+                exits.append(k)
+        return exits
+            
     def edit(self):
         self.title = raw_input("New title (blank for no change): ")
-        self.descripition = raw_input("New description (blank for no change): ")
+        self.description = raw_input("New description (blank for no change): ")
+    
+    def do_trigger(self):
+        pass
         
+    def set_exits(self):
+        self.exits = {'north': self.north,
+                      'south': self.south,
+                      'east': self.east,
+                      'west': self.west}
+    
+    def set_exit(self, direction, room2):
+        if direction == 'north':
+            self.north=room2
+            room2.south=self
+        if direction == 'south':
+            self.south = room2
+            room2.north = self
+        if direction == 'east':
+            self.east == room2
+            room2.east = self
+        if direction == 'west':
+            self.west = room2
+            room2.east == self
+        self.set_exits()
+        room2.set_exits()
                 
             
 class Dungeon:
@@ -111,15 +139,8 @@ class Dungeon:
                 break
                 
     def connect_rooms(self):
-        while 1==1:
-            self.list_rooms()
-            r1 = raw_input("Room 1 #: ")
-            d = raw_input("Direction: ")
-            r2 = raw_input("Room 2 #: ")
-            self.rooms[int(r1)].set_exit(d, self.rooms[int(r2)])
-            c = raw_input("Set another connection? ")
-            if c.lower() == 'n':
-                break
+        pass
+            
             
         
     def new_room(self):
@@ -167,8 +188,23 @@ class User(Mob):
     
     def __init__(self, location=Room(), dungeon=Dungeon(), title="", description=""):
         Mob.__init__(self, location=location, title=title, description=description, dungeon=dungeon)
+    
+    def move(self, direction):
+        self.location = self.location.exits[direction]
+        self.location.display_room()
         
     def dungeon_walk(self):
         print "Welcome to", self.dungeon.title, "!"
-            
+        print self.location.display_room()
+        while 1==1:
+            c = raw_input("> ")
+            if c.lower()[0] == 'q':
+                print "Goodbye!"
+                break
+            if DIR_CHOICES.__contains__(c.lower()):
+                self.move(c)
+                
+                
+
+
 
