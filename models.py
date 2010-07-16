@@ -1,3 +1,5 @@
+import logging
+
 DIRECTIONS = {
     'north' :   'south',
     'south' :   'north',
@@ -66,18 +68,19 @@ class Room:
                       'west': self.west}
     
     def set_exit(self, direction, room2):
+        print 'set_exit called with', self.title, direction, room2.title
         if direction == 'north':
             self.north=room2
             room2.south=self
         if direction == 'south':
-            self.south = room2
-            room2.north = self
+            self.south=room2
+            room2.north=self
         if direction == 'east':
-            self.east == room2
-            room2.east = self
+            self.east=room2
+            room2.west=self
         if direction == 'west':
-            self.west = room2
-            room2.east == self
+            self.west=room2
+            room2.east=self
         self.set_exits()
         room2.set_exits()
                 
@@ -198,11 +201,12 @@ class User(Mob):
         print self.location.display_room()
         while 1==1:
             c = raw_input("> ")
-            if c.lower()[0] == 'q':
-                print "Goodbye!"
-                break
-            if DIR_CHOICES.__contains__(c.lower()):
-                self.move(c)
+            if c.__len__() != 0:                
+                if c.lower()[0] == 'q':
+                    print "Goodbye!"
+                    break
+                if DIR_CHOICES.__contains__(c.lower()):
+                    self.move(c)
                 
                 
 
