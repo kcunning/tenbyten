@@ -36,7 +36,7 @@ ACTIONS = {'look': 'look',
 class Room:
     title = ""
     description = ""
-    content = []
+    inventory = []
     trigger = {}
 
       
@@ -69,8 +69,10 @@ class Room:
     
     def get_items(self):
         items = {}
-        for i in self.inventory:
-            items[i.title] = i
+        for item in self.inventory:
+            syn = item.title.split()
+            syn = syn[syn.__len__()-1]
+            items[syn] = item
         return items
             
 class Dungeon:
@@ -82,72 +84,14 @@ class Dungeon:
         self.title = title
         self.description = description
         self.rooms = rooms
-    
-
-            
-    def admin_menu(self):
-        while 1==1:
-            write("What would you like to do?")
-            write("Edit [d]ungeon | Edit a [r]oom | D[i]splay dungeon | Add a [c]onnection | [q]uit")
-            c = input()[0]
-            if c.lower() == 'd':
-                self.update()
-            if c.lower() == 'r':
-                self.rooms_menu()
-            if c.lower() == 'i':
-                self.display()
-            if c.lower() == 'c':
-                self.connect_rooms()
-            if c.lower() == 'q':
-                break
-            
-    def update(self):
-        title = input("New title (blank for no change): ")
-        description = input("New description (blank for no change): ")
-        if title:
-            self.title = title
-        if description:
-            self.description = description
         
-    def rooms_menu(self):
-        while 1==1:
-            c = input("Create a [n]ew room | [E]dit a room | [D]elete a room | Go [b]ack ")[0]
-            if c.lower() == 'n':
-                self.new_room()
-            if c.lower() == 'e':
-                self.edit_room()
-            if c.lower() == 'd':
-                pass
-            if c.lower() == 'b':
-                break
-            
-    def new_room(self):
-        """
-        Adds a new room, and connects it to other rooms if needed
-        """
-        title = input("Title: ")
-        description = input("Description: ")
-        while 1==1:
-            c = input("Do you want to add an exit? [y/n] ")[0]
-            exits = {}
-            if c.lower() == 'y':
-                while c.lower() == 'y':
-                    dir = input("Direction: [north/south/east/west/up/down] ")
-                    write("Which room?")
-                    for r in self.rooms:
-                        write(self.rooms.index(r) + r.title)
-                    e = input("Room #: ")
-                    exits[dir] = self.rooms[int(e)]
-                    c = input("Would you like to add another exit? [y/n] ")
-                break 
-            if c.lower() == 'n':
-                break
-        new_room = Room(title=title, description=description, exits=exits)
-        self.rooms.append(new_room)
-            
-    def edit_room(self):
-        self.list_rooms()
-        c = input("Which room? [#] ")
+    def update(title='', description='', rooms=[]):
+        if not title:
+            self.title = title
+        if not description:
+            self.description = description
+        if not rooms:
+            self.rooms = rooms
         
 class Mob:
     location = None
@@ -165,17 +109,17 @@ class Mob:
 class User(Mob):
     inventory = []
     
-    def __init__(self, location=Room(), dungeon=Dungeon(), title="", description="", inventory=[]):
+    def __init__(self, location=None, dungeon=None, title="", description="", inventory=[]):
         Mob.__init__(self, location=location, title=title, description=description, dungeon=dungeon)
         self.inventory = inventory
     
     def move(self, direction):
         exits = self.location.get_exits()
         if direction in exits:
-            self.location = self.location.exits[direction]
+            self.location = getattr(self.location, direction)
         else:
             write("That's not a valid exit.")
-        self.location.display_room()
+        display_room(self.location)
         
     def action(self, action):
         if action[0].lower() == 'go':
@@ -196,8 +140,14 @@ class User(Mob):
             
 
     def add_to_inventory(self, action):
-        print 'Trying to take something.'
+        action.pop(action.index('take'))
         items = self.location.get_items()
+        for item in action:
+            if item in items.keys():
+                self.inventory.append(items[item])
+                self.location.inventory.pop(self.location.inventory.index(items[item]))
+                write("Took " + items[item].title)
+        
 
         
     def parse_action(self, action):
@@ -238,11 +188,7 @@ class Item:
         # Todo -- have it also grab other synonyms from the item's initial name.
         self.title = title
         self.description = description
-        self.synonyms = synonyms
-        t = title.split()
-        t = t[t.__len__()-1]
-        if not t in self.synonyms:
-            self.synonyms.append(t)     
+        self.synonyms = synonyms    
     
     def display(self):
         write(self.title + ' - ' + self.description)
