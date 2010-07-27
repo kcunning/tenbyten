@@ -8,13 +8,12 @@ X	Create rooms linked to each other
 X	Rooms will have ordinal orientation to each other
 X	Gather rooms into dungeon
 X	Edit dungeons
-	Move around around rooms
-	Evaluate a dungeon
+X	Move around around rooms
 	
 
 0.2
-	Create items
-	Put items in rooms
+X	Create items
+X	Put items in rooms
 	Move items around
 	
 0.3
