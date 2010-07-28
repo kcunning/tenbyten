@@ -36,4 +36,13 @@ def display_dungeon_rooms(dungeon):
         write(str(dungeon.rooms.index(r)+1) + ' - ' + r.title)
         
 def menu_edit_dungeon(dungeon):
-    pass
+    write("Editing " + dungeon.title)
+    while 1==1:
+        c = input("Edit: [R]ooms or [D]ungeon, or [Q]uit")[0]
+        if c.lower() == 'r':
+            pass
+        if c.lower() == 'd':
+            pass
+        if c.lower() == 'q':
+            break
+        

@@ -14,8 +14,11 @@ X	Move around around rooms
 0.2
 X	Create items
 X	Put items in rooms
-	Move items around
+X	Move items around
 	
 0.3
+	MVC implementation complete
+	Dungeon admin
+	Some documentation would be nice
 	
 
