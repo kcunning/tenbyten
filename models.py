@@ -30,7 +30,8 @@ ACTIONS = {'look': 'look',
            'i': 'inventory',
            'l': 'look',
            'inventory': 'inventory',
-           'take': 'take'}
+           'take': 'take',
+           'drop': 'drop'}
            
 
 class Room:
@@ -137,6 +138,8 @@ class User(Mob):
             self.show_inventory()
         if action[0].lower() == 'take':
             self.add_to_inventory(action)
+        if action[0].lower() == 'drop':
+            self.remove_from_inventory(action)
             
 
     def add_to_inventory(self, action):
@@ -146,7 +149,24 @@ class User(Mob):
             if item in items.keys():
                 self.inventory.append(items[item])
                 self.location.inventory.pop(self.location.inventory.index(items[item]))
-                write("Took " + items[item].title)
+                write("Took " + items[item].title.lower())
+                
+    def get_items(self):
+        items = {}
+        for item in self.inventory:
+            syn = item.title.split()
+            syn = syn[syn.__len__()-1]
+            items[syn] = item
+        return items
+                
+    def remove_from_inventory(self, action):
+        action.pop(action.index('drop'))
+        items = self.get_items()
+        for item in action:
+            if item in items.keys():
+                self.inventory.pop(self.inventory.index(items[item]))
+                self.location.inventory.append(items[item])
+                write("Dropped " + items[item].title.lower())
         
 
         
