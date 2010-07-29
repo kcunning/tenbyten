@@ -71,14 +71,15 @@ class Room:
                 exits.append(dir)
         return exits
             
-    def edit(self):
+    def edit(self, title=None, description=None):
         '''
         Edits the Room object. Allows for changes to the title or description.
         Usage: room.edit()
-        TODO: not interactive
         '''
-        title = input("New title (blank for no change): ")
-        description = input("New description (blank for no change): ")
+        if title:
+            self.title = title
+        if description:
+            self.description = description
     
     def do_trigger(self):
         '''
@@ -112,17 +113,36 @@ class Dungeon:
         self.description = description
         self.rooms = rooms
         
-    def update(title='', description='', rooms=[]):
+    def edit(self, title=None, description=None, rooms=[]):
         '''
         Updates the dungeon. Only populated attributes are updated.\n
         Usage: dungeon.update(title=string, description=string, rooms=list of Rooms)
         '''
-        if not title:
+        if title:
             self.title = title
-        if not description:
+        if description:
             self.description = description
-        if not rooms:
+        if rooms:
             self.rooms = rooms
+            
+    def add_room(self, title=None, description=None):
+        '''
+        Adds a room to the dungeon.\n
+        Usage: dungeon.add_room(title=string, description=string)
+        '''
+        room = Room(title=title, description=description)
+        self.rooms.append(room)
+        
+    def delete_room(self, room):
+        '''
+        Deletes a room and all its connections from the dungeon.\n
+        Usage: dungeon.delete_room(room=Room)
+        '''
+        for exit in room.get_exits():
+            delattr(getattr(room, exit), DIRECTIONS[exit])
+        self.rooms.pop(self.rooms.index(room))
+
+            
         
 class Mob:
     '''
