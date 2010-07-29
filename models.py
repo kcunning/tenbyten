@@ -57,6 +57,7 @@ class Room:
         Sets exit to a room, and sets the inverse direction on the destination room.\n
         Usage: room1.connect_rooms(direction, room2)
         '''
+        direction = DIR_CHOICES[direction]
         setattr(self, direction, r2)
         setattr(r2, DIRECTIONS[direction], self)
 

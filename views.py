@@ -37,7 +37,10 @@ def display_room(room, admin=False):
     exits = room.get_exits()
     if exits:
         for i in exits:
-            write("\t\t" + i)
+            if not admin:
+                write("\t\t" + i)
+            else:
+                write("\t\t" + i + " - " + room.title)
     else:
             write("\t\tNo exits.")
             
@@ -102,6 +105,21 @@ def menu_edit_dungeon(dungeon):
             description = input("New description (blank for no change): ")
             dungeon.edit(title, description)
             display_dungeon(dungeon)
+        if c.lower() == 'c':
+            while 1==1:
+                for room in dungeon.rooms:
+                    write(str(dungeon.rooms.index(room)+1) + " - " + room.title)
+                    exits = room.get_exits()
+                    for exit in exits:
+                        write("\t" + exit + " - " + getattr(room, exit).title)
+                choice = input("[A]dd a connection, [R]emove a connection: ")[0]
+                if choice.lower() == 'a':
+                    r1 = int(input("Room 1 #: "))
+                    direction = input("Direction [N/S/E/W/U/D]: ")
+                    r2 = int(input("Room 2 #: "))
+                    dungeon.rooms[r1-1].connect_rooms(direction, dungeon.rooms[r2-1])
+                break
+                
         if c.lower() == 'q':
             break
         
