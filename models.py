@@ -60,7 +60,16 @@ class Room:
         direction = DIR_CHOICES[direction]
         setattr(self, direction, r2)
         setattr(r2, DIRECTIONS[direction], self)
-
+        
+    def disconnect_rooms(self, direction):
+        '''
+        Removes the connection from two rooms.\n
+        Usage: room1.disconnect_rooms(self, direction, r2)
+        '''
+        direction = DIR_CHOICES[direction]
+        delattr(getattr(self, direction), DIRECTIONS[direction])
+        delattr(self, direction)
+        
     def get_exits(self):
         '''
         Returns all exits for a room.\n
@@ -273,7 +282,7 @@ class User(Mob):
         TODO: protect this function\n
         Usage: user.admin(action=anything)
         '''
-        menu_edit_dungeon(self.dungeon)
+        menu_admin(self.dungeon)
         
     def dungeon_walk(self):
         '''

@@ -63,63 +63,76 @@ def display_dungeon_rooms(dungeon):
     for r in dungeon.rooms:
         write(str(dungeon.rooms.index(r)+1) + ' - ' + r.title)
         
-def menu_edit_dungeon(dungeon):
+def menu_room_admin(dungeon):
+    while 1==1:
+        choice = input("[A]dd a room, [E]dit a room, [D]elete a room, or go [B]ack to the previous menu: ")[0]
+        if choice.lower() == 'a':
+            title = input("Title for room: ")
+            description = input("Description for room: ")
+            dungeon.add_room(title=title, description=description)
+            write("Room added!")
+        if choice.lower() == 'e':
+            display_dungeon_rooms(dungeon)
+            choice = input("Which room do you want to change (#): ")
+            if int(choice) < 0 or int(choice) > dungeon.rooms.__len__():
+                write(choice + " is not a valid option.")
+                break
+            else:
+                title = input("New title (blank for no change): ")
+                description = input("New description (blank for no change): ")
+                dungeon.rooms[int(choice)-1].edit(title=title, description=description)
+                write("Room updated!")
+                display_room(dungeon.rooms[int(choice)-1])
+        if choice.lower() == 'd':
+            display_dungeon_rooms(dungeon)
+            choice = input("Which room do you want to delete (#):")
+            if int(choice) < 0 or int(choice) > dungeon.rooms.__len__():
+                write(choice + " is not a valid option.")
+                break
+            else:
+                dungeon.delete_room(dungeon.rooms[int(choice)-1])
+                write("Room deleted.")
+        if choice.lower() == 'b':
+            break
+
+def menu_connection_admin(dungeon):
+    while 1==1:
+        for room in dungeon.rooms:
+            write(str(dungeon.rooms.index(room)+1) + " - " + room.title)
+            exits = room.get_exits()
+            for exit in exits:
+                write("\t" + exit + " - " + getattr(room, exit).title)
+        choice = input("[A]dd a connection, [R]emove a connection, go [B]ack to the previous menu: ")[0]
+        if choice.lower() == 'a':
+            r1 = int(input("Room 1 #: "))
+            direction = input("Direction [N/S/E/W/U/D]: ")
+            r2 = int(input("Room 2 #: "))
+            dungeon.rooms[r1-1].connect_rooms(direction, dungeon.rooms[r2-1])
+        if choice.lower() == 'r':
+            room = int(input("Which room do you want to remove the connection from (#):"))
+            exits = dungeon.rooms[room-1].get_exits()
+            for exit in exits:
+                write(str(exits.index(exit)+1) + " - " + exit)
+            c = int(input("Which exit (#): "))
+            dungeon.rooms[room-1].disconnect_rooms(exits[ch-1])
+            write("Rooms disconnected")
+        if choice.lower() == 'b':
+            break
+    
+        
+def menu_admin(dungeon):
     write("Editing " + dungeon.title)
     while 1==1:
         c = input("Edit: [R]ooms, [D]ungeon, [C]onnections or [Q]uit: ")[0]
         if c.lower() == 'r':
-            while 1==1:
-                choice = input("[A]dd a room, [E]dit a room, [D]elete a room, or go [B]ack to the previous menu: ")[0]
-                if choice.lower() == 'a':
-                    title = input("Title for room: ")
-                    description = input("Description for room: ")
-                    dungeon.add_room(title=title, description=description)
-                    write("Room added!")
-                if choice.lower() == 'e':
-                    display_dungeon_rooms(dungeon)
-                    choice = input("Which room do you want to change (#): ")
-                    if int(choice) < 0 or int(choice) > dungeon.rooms.__len__():
-                        write(choice + " is not a valid option.")
-                        break
-                    else:
-                        title = input("New title (blank for no change): ")
-                        description = input("New description (blank for no change): ")
-                        dungeon.rooms[int(choice)-1].edit(title=title, description=description)
-                        write("Room updated!")
-                        display_room(dungeon.rooms[ing(choice)-1])
-                if choice.lower() == 'd':
-                    display_dungeon_rooms(dungeon)
-                    choice = input("Which room do you want to delete (#):")
-                    if int(choice) < 0 or int(choice) > dungeon.rooms.__len__():
-                        write(choice + " is not a valid option.")
-                        break
-                    else:
-                        dungeon.delete_room(dungeon.rooms[int(choice)-1])
-                        write("Room deleted.")
-                if choice.lower() == 'b':
-                    break
-
-            
+            menu_room_admin(dungeon)
         if c.lower() == 'd':
             title = input("New title (blank for no change): ")
             description = input("New description (blank for no change): ")
             dungeon.edit(title, description)
             display_dungeon(dungeon)
         if c.lower() == 'c':
-            while 1==1:
-                for room in dungeon.rooms:
-                    write(str(dungeon.rooms.index(room)+1) + " - " + room.title)
-                    exits = room.get_exits()
-                    for exit in exits:
-                        write("\t" + exit + " - " + getattr(room, exit).title)
-                choice = input("[A]dd a connection, [R]emove a connection: ")[0]
-                if choice.lower() == 'a':
-                    r1 = int(input("Room 1 #: "))
-                    direction = input("Direction [N/S/E/W/U/D]: ")
-                    r2 = int(input("Room 2 #: "))
-                    dungeon.rooms[r1-1].connect_rooms(direction, dungeon.rooms[r2-1])
-                break
-                
+            menu_connection_admin(dungeon)
         if c.lower() == 'q':
             break
         
