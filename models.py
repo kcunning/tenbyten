@@ -115,13 +115,14 @@ class Dungeon:
     Usage: Dungeon(title=string, description=string, rooms=list of rooms)
     '''
     
-    def __init__(self, title='', description='', rooms = []):
+    def __init__(self, title='', description='', rooms = [], users=[]):
         '''
         Usage: Dungeon(title=string, description=string, rooms=list of Rooms)
         '''
         self.title = title
         self.description = description
         self.rooms = rooms
+        self.users = users
         
     def edit(self, title=None, description=None, rooms=[]):
         '''
@@ -134,6 +135,15 @@ class Dungeon:
             self.description = description
         if rooms:
             self.rooms = rooms
+            
+    def add_item(self, title, description, location):
+        '''
+        Adds an item to the dungeon. The item can be placed in a room, or on a user.\n
+        Usage: dungeon.add_item(title=string, description=string, location=User or Room object)
+        '''
+        item = Item(title=title, description=description)
+        display_item(item)
+        location.inventory.append(item)
             
     def add_room(self, title=None, description=None):
         '''
@@ -151,7 +161,32 @@ class Dungeon:
         for exit in room.get_exits():
             delattr(getattr(room, exit), DIRECTIONS[exit])
         self.rooms.pop(self.rooms.index(room))
-
+    
+    def get_all_items(self):
+        '''
+        Returns a dictionary of all items in the dungeon, including items on users. The key is the item, and the value is the location.\n
+        Usage: items = dungeon.get_all_items()
+        '''
+        items = {}
+        for room in self.rooms:
+            for item in room.inventory:
+                items[item] = room
+        for user in self.users:
+            for item in user.inventory:
+                items[item] = user
+        return items
+        
+    def get_all_containers(self):
+        '''
+        Returns a list of all containers.\n
+        Usage: list = dungeon.get_all_containers()
+        '''
+        containers = []
+        for room in self.rooms:
+            containers.append(room)
+        for user in self.users:
+            containers.append(user)
+        return containers
             
         
 class Mob:
@@ -181,6 +216,7 @@ class User(Mob):
         Usage: User(title=string, description=string, inventory=list of items, location=Room, dungeon=Dungeon)
         '''
         Mob.__init__(self, location=location, title=title, description=description, dungeon=dungeon)
+        dungeon.users.append(self)
         self.inventory = inventory
     
     def move(self, direction):

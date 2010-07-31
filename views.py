@@ -5,7 +5,7 @@ def display_item(item):
     Displays an item.\n
     Usage: display_item(item=Item)
     '''
-    write(item.title + ' - ' + item.description)
+    write(item.title.capitalize() + ' - ' + item.description.capitalize())
     
 def write(string):
     '''
@@ -119,11 +119,31 @@ def menu_connection_admin(dungeon):
         if choice.lower() == 'b':
             break
     
+def menu_items_admin(dungeon):
+    '''
+    Allows the user to admin items within the dungeon.\n
+    Usage: menu_items_admin(dungeon=Dungeon)
+    '''
+    items = dungeon.get_all_items()
+    keys = items.keys()
+    for item in items.keys():
+        write(str(keys.index(item) + 1) + " - " +item.title + " - " + items[item].title)
+    choice = input("[A]dd an item, [E]dit an item, [D]elete an item: ")[0]
+    if choice.lower() == 'a':
+        title = input("Name of item: ")
+        description = input("Description of item: ")
+        containers = dungeon.get_all_containers()
+        for container in containers:
+            write(str(containers.index(container) + 1) + " - " + container.title)
+        place = int(input("Which container #:"))
+        dungeon.add_item(title=title, description=description, location=containers[place-1])
+        
+    
         
 def menu_admin(dungeon):
     write("Editing " + dungeon.title)
     while 1==1:
-        c = input("Edit: [R]ooms, [D]ungeon, [C]onnections or [Q]uit: ")[0]
+        c = input("Edit: [R]ooms, [D]ungeon, [C]onnections, [I]tems, or [Q]uit: ")[0]
         if c.lower() == 'r':
             menu_room_admin(dungeon)
         if c.lower() == 'd':
@@ -133,6 +153,8 @@ def menu_admin(dungeon):
             display_dungeon(dungeon)
         if c.lower() == 'c':
             menu_connection_admin(dungeon)
+        if c.lower() == 'i':
+            menu_items_admin(dungeon)
         if c.lower() == 'q':
             break
         
