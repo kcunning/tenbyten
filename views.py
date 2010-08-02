@@ -5,14 +5,9 @@ def display_item(item):
     Displays an item.\n
     Usage: display_item(item=Item)
     '''
-    write(item.title.capitalize() + ' - ' + item.description.capitalize())
+    return (item.title.capitalize(), item.description.capitalize())
+
     
-def write(string):
-    '''
-    Writes a message to stdout, and appends a newline.\n
-    Usage: write(string=string)
-    '''
-    sys.stdout.write(string+'\n')
     
 def input(prompt="> "):
     '''
@@ -29,10 +24,11 @@ def display_room(room, admin=False):
     '''
     write(room.title)
     write('\t' + room.description)
-    if room.inventory:
-        write('You see:')
-        for i in room.inventory:
-            write(i.title)
+    if hasattr(room, 'inventory'):
+        if room.inventory:
+            write('You see:')
+            for i in room.inventory:
+                write(i.title)
     write("\tExits:")
     exits = room.get_exits()
     if exits:
