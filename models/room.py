@@ -1,4 +1,5 @@
-
+from globals import *
+from controllers import *
 
 class Room:
     '''
@@ -14,6 +15,7 @@ class Room:
         self.description = description
         if inventory:
             self.inventory=inventory
+
         
     def connect_rooms(self, direction, r2):
         '''

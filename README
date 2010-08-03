@@ -17,8 +17,10 @@ X	Put items in rooms
 X	Move items around
 	
 0.3
-	MVC implementation complete
-	Dungeon admin
-	Some documentation would be nice
+X	MVC implementation complete
+X	Dungeon admin
+X	Some documentation would be nice
 	
+0.4
+	Curses!
 

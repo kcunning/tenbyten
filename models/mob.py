@@ -1,3 +1,7 @@
+from controllers import *
+from views import *
+from globals import *
+
 class Mob:
     '''
     A mobile item in a dungeon.\n
@@ -35,9 +39,6 @@ class User(Mob):
         exits = self.location.get_exits()
         if direction in exits:
             self.location = getattr(self.location, direction)
-        else:
-            write("That's not a valid exit.")
-        display_room(self.location)
 
     def action(self, action):
         '''
@@ -139,16 +140,9 @@ class User(Mob):
         Initiates the user's walking through the dungeon. Continues until the user quits.\n
         Usage: user.dungeon_walk()
         '''
-        write("Welcome to " +  self.dungeon.title + "!")
-        display_room(self.location)
-        while 1==1:
-            c = input("> ")
-            if c.__len__() != 0: 
-                self.parse_action(c)
-
-                if c.lower()[0] == 'q':
-                    write("Goodbye!")
-                    break
+        title = "Welcome to " + self.dungeon.title + "!"
+        title, description, inventory, exits = display_room(self.location)
+        
 
     def print_inventory(self, action):
         '''

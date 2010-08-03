@@ -1,4 +1,5 @@
 import sys
+from controllers import *
 
 def display_item(item):
     '''
@@ -22,23 +23,13 @@ def display_room(room, admin=False):
     Usage: display_room(room=Room, admin=Boolean)\n
     TODO: implement admin (displays title of connecting room, hidden items)
     '''
-    write(room.title)
-    write('\t' + room.description)
-    if hasattr(room, 'inventory'):
-        if room.inventory:
-            write('You see:')
-            for i in room.inventory:
-                write(i.title)
-    write("\tExits:")
     exits = room.get_exits()
-    if exits:
-        for i in exits:
-            if not admin:
-                write("\t\t" + i)
-            else:
-                write("\t\t" + i + " - " + room.title)
+    if hasattr(room, 'inventory'):
+        inventory = room.inventory
     else:
-            write("\t\tNo exits.")
+        inventory = []
+    return (room.title, room.description, inventory, exits)
+    
             
             
 def display_dungeon(dungeon):
