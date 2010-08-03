@@ -39,6 +39,11 @@ class User(Mob):
         exits = self.location.get_exits()
         if direction in exits:
             self.location = getattr(self.location, direction)
+            message = "Moved."
+        else:
+            message = "You can't go that way."
+        return message
+        
 
     def action(self, action):
         '''
@@ -48,19 +53,11 @@ class User(Mob):
         Usage: this function should be used with parse_action, as that checks to make sure the action is valid.\n
         user.parse_action(action=string)
         '''
-        if action[0].lower() == 'go':
-            action.pop(action.index('go'))
-            dir = None
-            for i in action:
-                if i in DIR_CHOICES.keys():
-                    dir = i
-            if dir:
-                self.move(DIR_CHOICES[dir.lower()])
-            else:
-                write("You need to give me a direction if you want to go somewhere.")
-                self.location.display_room()
+        if action[0] == 'go':
+            message = getattr(self, ACTIONS[action[0]])(action[action.__len__()-1])
         else:
-            getattr(self, ACTIONS[action[0]])(action)      
+            message = getattr(self, ACTIONS[action[0]])(action)      
+        return message
 
     def add_item(self, item):
         '''
@@ -76,18 +73,22 @@ class User(Mob):
         '''
         action.pop(action.index('take'))
         items = self.location.get_items()
+        message = "Took:"
         for item in action:
             if item in items.keys():
                 self.add_item(items[item])
                 self.location.inventory.pop(self.location.inventory.index(items[item]))
-                write("Took " + items[item].title.lower())
+                message = message + " " + item
+        if message == "Took:":
+            message = "Took nothing."
+        return message
 
     def look(self, action):
         '''
         Displays the current location.\n
         Usage: user.look()
         '''
-        display_room(self.location)
+        return "You look around."
 
     def get_items(self):
         '''
@@ -108,11 +109,16 @@ class User(Mob):
         '''
         action.pop(action.index('drop'))
         items = self.get_items()
+        message = "Dropped:"
         for item in action:
             if item in items.keys():
                 self.inventory.pop(self.inventory.index(items[item]))
                 self.location.add_item(items[item])
-                write("Dropped " + items[item].title.lower())
+                message = message + " " + item
+        if message == "Dropped:":
+            message = "Not carrying that. Nothing dropped."
+        return message
+            
 
     def parse_action(self, action):
         '''
@@ -121,11 +127,13 @@ class User(Mob):
         '''
         action = action.split()
         if action[0].lower() in ACTIONS.keys():
-            self.action(action)
-            return
+            message = self.action(action)
+            if message == None:
+                message = "Actioned."
+            return message
         if action[0].lower() in DIR_CHOICES.keys():
-            self.move(DIR_CHOICES[action[0].lower()])
-            return
+            message = self.move(DIR_CHOICES[action[0].lower()])
+            return message
 
     def admin(self, action):
         '''
@@ -151,7 +159,11 @@ class User(Mob):
         Usage: user.print_inventory(action=list of string)
         '''
         if not self.inventory:
-            write('You have nothing in your inventory.')
+            message =  "You have nothing in your inventory."
         else:
+            message = "You are carrying:"
             for i in self.inventory:
-                write(i.title)
+                message = message + " " + i.title.lower() + ","
+            message = message.rstrip(',')
+        return message
+                

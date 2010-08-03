@@ -25,7 +25,7 @@ DIR_CHOICES = { 'north': 'north',
 # All possible actions a user can take, and their non-abbreviated counterpart.                
 ACTIONS = {'look': 'look',
            'take': 'take',
-           'go': 'go',
+           'go': 'move',
            'i': 'print_inventory',
            'l': 'look',
            'inventory': 'print_inventory',
