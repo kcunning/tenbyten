@@ -1,4 +1,6 @@
 from controllers import *
+from . import Room
+from globals import *
         
 class Dungeon:
     '''

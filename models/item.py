@@ -18,7 +18,7 @@ class Item:
         Displays the item's title and description.\n
         Usage: item.display()
         '''
-        write(self.title + ' - ' + self.description)
+        return self.title, self.description
     
     def edit(self, title='', description='', location=None):
         '''

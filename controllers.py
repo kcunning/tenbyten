@@ -20,6 +20,7 @@ def write(string):
     '''
     sys.stdout.write(string+'\n')
     
+    
 def user_screen(screen, title="", main_text="",exits=[], inventory=[], prompt="> ", message=""):
     screen.erase()
     screen.addstr(0,0,title)
