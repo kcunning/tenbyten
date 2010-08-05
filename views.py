@@ -66,15 +66,7 @@ def menu_room_admin(dungeon, screen):
             dungeon.add_room(title=room_title, description=room_description)
             message = "Room added!"
         if choice.lower() == 'l':
-            main_text = "Rooms in " + dungeon.title + ":\n"
-            for room in dungeon.rooms:
-                main_text = main_text + room.title + ": " + room.description + "\n\tExits:"
-                exits = room.get_exits()
-                if not exits:
-                    main_text = main_text + " No exits"
-                for exit in exits:
-                    main_text = main_text + " " + exit
-                main_text = main_text + "\n"
+            main_text = display_all_rooms(dungeon=dungeon, no_exits=False)
             choice = user_screen(screen=screen, title=title, main_text=main_text, message = "Enter/Return to go back.")
             message = ""
         if choice.lower() == 'm':
@@ -93,44 +85,52 @@ def menu_room_admin(dungeon, screen):
             r = user_screen(screen=screen, title=title, main_text=main_text, message = "Room #")
             dungeon.delete_room(dungeon.rooms[int(r)-1])
             message = "Room deleted."
-        
-           
-'''    
-    if choice.lower() == 'd':
-        display_dungeon_rooms(dungeon)
-        choice = input("Which room do you want to delete (#):")
-        if int(choice) < 0 or int(choice) > dungeon.rooms.__len__():
-            write(choice + " is not a valid option.")
-        else:
-            dungeon.delete_room(dungeon.rooms[int(choice)-1])
-            write("Room deleted.")
-    if choice.lower() == 'b':
-        pass
-'''
-
-def menu_connection_admin(dungeon):
-    while 1==1:
-        for room in dungeon.rooms:
-            write(str(dungeon.rooms.index(room)+1) + " - " + room.title)
+ 
+def display_all_rooms(dungeon, no_exits = True):
+    main_text = "Rooms in " + dungeon.title + ":\n"
+    for room in dungeon.rooms:
+        main_text = main_text + str(dungeon.rooms.index(room)+1) + " - " + room.title + ": " + room.description
+        if not no_exits:
+            main_text += "\n\tExits:"
             exits = room.get_exits()
+            if not exits:
+                main_text += " No exits"
             for exit in exits:
-                write("\t" + exit + " - " + getattr(room, exit).title)
-                choice = input("[A]dd a connection, [R]emove a connection, go [B]ack to the previous menu: ")[0]
-            if choice.lower() == 'a':
-                r1 = int(input("Room 1 #: "))
-                direction = input("Direction [N/S/E/W/U/D]: ")
-                r2 = int(input("Room 2 #: "))
-                dungeon.rooms[r1-1].connect_rooms(direction, dungeon.rooms[r2-1])
-            if choice.lower() == 'r':
-                room = int(input("Which room do you want to remove the connection from (#):"))
-                exits = dungeon.rooms[room-1].get_exits()
-                for exit in exits:
-                    write(str(exits.index(exit)+1) + " - " + exit)
-                c = int(input("Which exit (#): "))
-                dungeon.rooms[room-1].disconnect_rooms(exits[ch-1])
-                write("Rooms disconnected")
-            if choice.lower() == 'b':
-                break
+                main_text += " " + exit
+        main_text += "\n"
+    return main_text
+
+def menu_connection_admin(dungeon, screen):
+    title = "Connections admin"
+    main_text = "[A]dd a connection, [R]emove a connection, go [B]ack to the previous menu: "
+    message = ""
+    while 1:
+        choice = user_screen(title=title, main_text=main_text, message=message, screen=screen)
+        if choice.lower() == 'b':
+            break
+        if choice.lower() == 'a':
+            main_text = display_all_rooms(dungeon, no_exits=False)
+            main_text += "Room 1 #:"
+            r1 = int(user_screen(title=title, main_text=main_text, screen=screen))
+            direction = user_screen(title=title, main_text="Direction [N/S/E/W/U/D]: ", screen=screen)
+            main_text = display_all_rooms(dungeon, no_exits=False)
+            main_text += "Room 2 #:"
+            r2 = int(user_screen(title=title, main_text=main_text, screen=screen))
+            dungeon.rooms[r1-1].connect_rooms(direction, dungeon.rooms[r2-1])
+            message = "Connection added"
+        if choice.lower() == 'r':
+            main_text = display_all_rooms(dungeon, no_exits=False)
+            main_text += "\nWhich room do you want to remove the connection from?"
+            r = int(user_screen(title=title, main_text=main_text, screen=screen))-1
+            exits = dungeon.rooms[r].get_exits()
+            main_text = "Which exit do you want to remove?\n"
+            for exit in exits:
+                main_text += str(exits.index(exit)+1) + " -  " + exit
+            e = int(user_screen(title=title, main_text=main_text, screen=screen))
+            dungeon.rooms[r].disconnect_rooms(exits[e-1])
+            message = "Connection removed"
+        main_text = "[A]dd a connection, [R]emove a connection, go [B]ack to the previous menu: "
+    
     
 def menu_items_admin(dungeon):
     '''
@@ -152,20 +152,32 @@ def menu_items_admin(dungeon):
         dungeon.add_item(title=title, description=description, location=containers[place-1])
         
     
-        
-def menu_admin(dungeon, choice=""):
-    title = dungeon.title
-    description = "Edit: [R]ooms, [D]ungeon, [C]onnections, [I]tems, or [Q]uit: "
-    return title, description
-        
+def dungeon_admin(dungeon, screen):
+    title = "Dungeon Admin"
+    main_text = "New dungeon title (nothing for no change):"
+    new_title = user_screen(screen=screen, title=title, main_text=main_text)
+    main_text = "New dungeon description (nothing for no change):"
+    new_description = user_screen(screen=screen, title=title, main_text=main_text)
+    dungeon.edit(title=new_title, description=new_description)
+    message = "Dungeon updated"
+    return message
         
 def admin_screen(dungeon, screen):
+    message = ""
     while 1:
-        title, main_text = menu_admin(dungeon=dungeon)
-        c = user_screen(screen=screen, title=title, main_text=main_text)
+        title = dungeon.title
+        main_text = "Edit: [R]ooms, [D]ungeon, [C]onnections, [I]tems, or [Q]uit: "
+        c = user_screen(screen=screen, title=title, main_text=main_text, message = message)
         if c.lower()[0] == 'q':
             break
         if c.lower()[0] == 'r':
             menu_room_admin(dungeon, screen)
+            message = ""
+        if c.lower()[0] == 'c':
+            menu_connection_admin(dungeon, screen)
+            message = ""
+        if c.lower()[0] == 'd':
+            message = dungeon_admin(dungeon, screen)
+        
         
         
