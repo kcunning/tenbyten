@@ -1,6 +1,6 @@
 from models import *
 from views import *
-from controllers import *
+from controllers.command_line import *
 import time
 
 def create_rooms(items):

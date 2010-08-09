@@ -1,4 +1,4 @@
-from controllers import *
+
 from views import *
 from globals import *
 
