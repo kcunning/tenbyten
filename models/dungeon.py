@@ -1,5 +1,6 @@
 from controllers import *
 from . import Room
+from item import Item
 from globals import *
         
 class Dungeon:

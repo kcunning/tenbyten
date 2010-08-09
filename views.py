@@ -9,7 +9,6 @@ def display_item(item):
     return (item.title.capitalize(), item.description.capitalize())
 
     
-    
 def input(prompt="> "):
     '''
     Gets a value from the user.\n
@@ -132,26 +131,65 @@ def menu_connection_admin(dungeon, screen):
         main_text = "[A]dd a connection, [R]emove a connection, go [B]ack to the previous menu: "
     
     
-def menu_items_admin(dungeon):
+def menu_items_admin(dungeon, screen):
     '''
     Allows the user to admin items within the dungeon.\n
     Usage: menu_items_admin(dungeon=Dungeon)
     '''
     items = dungeon.get_all_items()
     keys = items.keys()
-    for item in items.keys():
-        write(str(keys.index(item) + 1) + " - " +item.title + " - " + items[item].title)
-    choice = input("[A]dd an item, [E]dit an item, [D]elete an item: ")[0]
-    if choice.lower() == 'a':
-        title = input("Name of item: ")
-        description = input("Description of item: ")
-        containers = dungeon.get_all_containers()
-        for container in containers:
-            write(str(containers.index(container) + 1) + " - " + container.title)
-        place = int(input("Which container #:"))
-        dungeon.add_item(title=title, description=description, location=containers[place-1])
-        
+    title = "Items admin"
+    message = ""
+    main_text = "[A]dd an item, [E]dit an item, , [L]ist all items, [D]elete an item, [B]ack to the previous menu: "
+    while 1:
+        choice = user_screen(title=title, main_text=main_text, message = message, screen=screen)
+        if choice.lower()[0] == 'b':
+            break
+        if choice.lower()[0] == 'a':
+            main_text = "Name of item"
+            name = user_screen(title=title, main_text=main_text, screen=screen)
+            main_text = "Item description"
+            description = user_screen(title=title, main_text=main_text, screen=screen)
+            containers = dungeon.get_all_containers()
+            main_text = "And where should I put it?\n"
+            for container in containers:
+                main_text += str(containers.index(container) + 1) + " - " + container.title + "\n"
+            c = int(user_screen(title=title, main_text=main_text, screen=screen))
+            dungeon.add_item(title=name, description=description, location=containers[c-1])
+            message = "Item added!"
+        if choice.lower()[0] == 'e':
+            main_text = display_all_items(dungeon)
+            main_text += "Item # to edit:"
+            i = int(user_screen(title=title, main_text=main_text, screen=screen))-1
+            items = dungeon.get_all_items()
+            item = items.keys()[i]
+            new_title = user_screen(title=title, main_text="New title (Return for no change)", screen=screen)
+            new_description = user_screen(title=title, main_text="New description (Return for no change)", screen=screen)
+            containers = dungeon.get_all_containers()
+            main_text = ""
+            for container in containers:
+                main_text += str(containers.index(container) + 1) + " - " + container.title + "\n"
+            main_text += "And where should I put it? (Return for no change)"
+            c = int(user_screen(title=title, main_text=main_text, screen=screen))-1
+            item.edit(title=new_title, description=new_description)
+            if c:
+                dungeon.rooms[c].add_item(item)
+            message = "Item updated."
+        if choice.lower()[0] == 'l':
+            main_text = display_all_items(dungeon)
+            c = user_screen(title=title, main_text=main_text, screen=screen, message="Press enter to go back.")
+            
+        main_text = "[A]dd an item, [E]dit an item, , [L]ist all items, [D]elete an item, [B]ack to the previous menu: "
     
+def display_all_items(dungeon):
+    items = dungeon.get_all_items()
+    items = items.keys()
+    text = "Items:\n"
+    for item in items:
+        text += str(items.index(item)+1) + " - " + item.title + ": " + item.description +  "\n"
+    return text
+    
+
 def dungeon_admin(dungeon, screen):
     title = "Dungeon Admin"
     main_text = "New dungeon title (nothing for no change):"
@@ -178,6 +216,8 @@ def admin_screen(dungeon, screen):
             message = ""
         if c.lower()[0] == 'd':
             message = dungeon_admin(dungeon, screen)
+        if c.lower()[0] == 'i':
+            menu_items_admin(dungeon, screen)
         
         
         

@@ -24,7 +24,8 @@ if __name__ == "__main__":
     stdscr = display_init()
     message = ""
     while 1:
-        title, description, inventory, exits =  display_room(user.location)
+        title = dungeon.title
+        subtitle, description, inventory, exits =  display_room(user.location)
         c = user_screen(title=title, main_text=description, inventory=inventory, exits=exits, message=message, screen=stdscr)
         if c == 'q':
             break

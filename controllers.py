@@ -21,9 +21,10 @@ def write(string):
     sys.stdout.write(string+'\n')
     
     
-def user_screen(screen, title="", main_text="",exits=[], inventory=[], prompt="> ", message=""):
+def user_screen(screen, title="", subtitle="", main_text="",exits=[], inventory=[], prompt="> ", message=""):
     screen.erase()
     screen.addstr(0,0,title)
+    screen.addstr(1,0, subtitle)
     screen.addstr(2,0,main_text)
     if exits:
         screen.addstr(4,0,"Exits:")

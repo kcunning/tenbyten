@@ -65,6 +65,19 @@ class User(Mob):
         Usage: user.add_item(item=Item)
         '''
         self.inventory.append(item)
+    
+    def get_items(self):
+        '''
+        Returns a dictionary list of all the items on a user. Keys are synonmys, values are objects.\n
+        Usage: room.get_items()
+        '''
+        items = {}
+        if self.inventory:
+            for item in self.inventory:
+                syn = item.title.split()
+                syn = syn[syn.__len__()-1]
+                items[syn] = item
+        return items
 
     def take(self, action):
         '''
@@ -89,6 +102,22 @@ class User(Mob):
         Usage: user.look()
         '''
         return "You look around."
+        
+    def examine(self, action):
+        '''
+        Displays the properties of an object
+        '''
+        items = self.get_items()
+        items.update(self.location.get_items())
+        description = ""
+        for i in action:
+            if i in items.keys():
+                description += items[i].title + " - " + items[i].description + "\n"
+            if i == 'me':
+                description += self.description
+        return description
+            
+        return "There's something there..."
 
     def get_items(self):
         '''

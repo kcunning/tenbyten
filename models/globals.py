@@ -31,4 +31,6 @@ ACTIONS = {'look': 'look',
            'inventory': 'print_inventory',
            'take': 'take',
            'drop': 'drop',
-           'admin': 'admin',}
+           'admin': 'admin',
+           'examine': 'examine',
+           'x': 'examine'}

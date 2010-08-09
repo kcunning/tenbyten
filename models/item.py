@@ -27,9 +27,7 @@ class Item:
         TODO: not interactive
         '''
         # TODO -- Add location and synonyms
-        if not title:
-            t = input("New title (return to keep the same): ")
-            self.title = t
-        if not description:
-            d = input("New description (return to keep the same):")
-            self.description = d
+        if title:
+            self.title = title
+        if description:
+            self.description = description
